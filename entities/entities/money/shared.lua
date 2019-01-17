@@ -11,7 +11,7 @@ ENT.Contact = ""
 ENT.Purpose = "Money entity"
 ENT.Instructions = "Take the money"
 
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = true
 
-ENT.Model = "models/props/cs_assault/money.mdl"
+ENT.Model = "models/props_lab/box01a.mdl"

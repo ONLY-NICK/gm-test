@@ -5,7 +5,7 @@ include("shared.lua")
 
 function ENT:Initialize()
 	self:SetModel(self.Model)
-	self.PhysicsInit(SOLID_VPHYSICS)
+	self:PhysicsInit(SOLID_VPHYSICS)
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetSolid(SOLID_VPHYSICS)
 
