@@ -12,6 +12,7 @@ function GM:PlayerSpawn(ply)
 	ply:Give("weapon_physcannon")
 	ply:Give("weapon_physgun")
 	ply:Give("gmod_tool")
+	ply:SetModel("models/player/Group01/Male_01.mdl")
 	ply:SetupHands()
 end
 
@@ -71,5 +72,25 @@ function GM:ShutDown()
 	v:SetPData("LVL",v:GetNWInt("LVL"))
 	v:SetPData("EXP",v:GetNWInt("EXP"))
 	v:SetPData("Money",v:GetNWInt("Money"))
+	end
+end
+
+function GM:PlayerSay(ply,text)
+	local plymsg = string.Explode(" ", text)
+
+	if (plymsg[1] == "/dropmoney") then
+		if (tonumber(plymsg[2])) then
+			local ammount = tonumber(plymsg[2])
+			local balance = ply:GetNWInt("Money")
+
+			if (ammount > 0 and ammount <= balance) then
+				ply:SetNWInt("Money", balance - ammount)
+
+				scripted_ents.Get("money"):SpawnFunction(ply, ply:GetEyeTrace(), "money"):SetValue(ammount)
+			end
+
+			return ""
+
+		end
 	end
 end
