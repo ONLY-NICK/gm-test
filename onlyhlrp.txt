@@ -1,7 +1,0 @@
-"onlyhlrp"
-{
-	"base" 			"base"
-	"title" 		"HL2RP"
-	"maps" 			""
-	"menusystem"	"1"
-}

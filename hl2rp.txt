@@ -1,7 +1,8 @@
 "hl2rp"
 {
-	"base" 			"base"
-	"title" 		"hl2rp"
-	"maps" 			""
+	"base" 			"sandbox"
+	"title" 		"HL2RP"
+	"version"   "2.7.0"
+	"maps" 			"^rp"
 	"menusystem"	"1"
 }
