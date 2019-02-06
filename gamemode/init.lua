@@ -4,93 +4,53 @@ AddCSLuaFile("hud.lua")
 
 include("shared.lua")
 
-function GM:PlayerSpawn(ply)
-	ply:SetGravity(0.80)
-	ply:SetMaxHealth(100)
-	ply:SetRunSpeed(300)
-	ply:SetWalkSpeed(200)
-	ply:Give("weapon_physcannon")
-	ply:Give("weapon_physgun")
-	ply:Give("gmod_tool")
-	ply:SetModel("models/player/Group01/Male_01.mdl")
-	ply:SetupHands()
+util.AddNetworkString("F4Menu")
+function GM:ShowSpare2(ply)
+	net.Start("F4Menu")
+	net.Broadcast()
 end
 
-function GM:PlayerInitialSpawn(ply)
-	ply:SendLua("local tab = {Color(155,255,155), [[Игрок "..ply:Nick().." использует новый гейммод!]] } chat.AddText(unpack(tab))")
+/*---------------------------------------------------------------------------
+Loading modules
+---------------------------------------------------------------------------*/
+local fol = GM.FolderName .. "/gamemode/modules/"
+local files, folders = file.Find(fol .. "*", "LUA")
 
-	if (ply:GetPData("LVL")==nil) then
-		ply:SetNWInt("LVL",1)
-	else
-		ply:SetNWInt("LVL",ply:GetPData("LVL"))
-	end
+sv_count = 0
+sh_count = 0
+cl_count = 0
 
-	if (ply:GetPData("EXP")==nil) then
-		ply:SetNWInt("EXP",1)
-	else
-		ply:SetNWInt("EXP",ply:GetPData("EXP"))
-	end
-
-	if (ply:GetPData("Money")==nil) then
-		ply:SetNWInt("Money",1)
-	else
-		ply:SetNWInt("Money",ply:GetPData("Money"))
-	end
+for k, v in pairs(files) do
+    if string.GetExtensionFromFilename(v) ~= "lua" then continue end
+    include(fol .. v)
 end
 
-function GM:OnNPCKilled(npc, attacker, inflictor)
-	attacker:SetNWInt("Money",attacker:GetNWInt("money") + 100)
-	attacker:SetNWInt("EXP",attacker:GetNWInt("EXP") + 100)
+for _, folder in SortedPairs(folders, true) do
+    if folder == "." or folder == ".." then continue end
 
-	LevelCheck(attacker)
+    for _, File in SortedPairs(file.Find(fol .. folder .. "/sh_*.lua", "LUA"), true) do
+        AddCSLuaFile(fol .. folder .. "/" .. File)
+        if File == "sh_interface.lua" then continue end
+        include(fol .. folder .. "/" .. File)
+        sh_count = sh_count + 1
+    end
+
+    for _, File in SortedPairs(file.Find(fol .. folder .. "/sv_*.lua", "LUA"), true) do
+        if File == "sv_interface.lua" then continue end
+        include(fol .. folder .. "/" .. File)
+        sv_count = sv_count + 1
+    end
+
+    for _, File in SortedPairs(file.Find(fol .. folder .. "/cl_*.lua", "LUA"), true) do
+        if File == "cl_interface.lua" then continue end
+        AddCSLuaFile(fol .. folder .. "/" .. File)
+        cl_count = cl_count + 1
+    end
 end
 
-function GM:PlayerDeath(victim, attacker, inflictor)
-	victim:SendLua("local tab = {Color(155,255,155), [[Игрок "..victim:Nick().." погиб!]] } chat.AddText(unpack(tab))")
-end
-
-function LevelCheck(ply)
-	local nextlevelexp = (ply:GetNWInt("LVL")*500)*2.5
-	local curExp = ply:GetNWInt("EXP")
-	local curLVL = ply:GetNWInt("LVL")
-
-	if (curExp > nextlevelexp) then
-		curExp = curExp - nextlevelexp
-		ply:SetNWInt("EXP",curExp)
-		ply:SetNWInt("LVL",curLVL+1)
-	end
-end
-
-function GM:PlayerDisconnected(ply)
-	ply:SetPData("LVL",ply:GetNWInt("LVL"))
-	ply:SetPData("EXP",ply:GetNWInt("EXP"))
-	ply:SetPData("Money",ply:GetNWInt("Money"))
-end
-
-function GM:ShutDown()
-	for k, v in pairs(player.GetAll()) do
-	v:SetPData("LVL",v:GetNWInt("LVL"))
-	v:SetPData("EXP",v:GetNWInt("EXP"))
-	v:SetPData("Money",v:GetNWInt("Money"))
-	end
-end
-
-function GM:PlayerSay(ply,text)
-	local plymsg = string.Explode(" ", text)
-
-	if (plymsg[1] == "/dropmoney") then
-		if (tonumber(plymsg[2])) then
-			local ammount = tonumber(plymsg[2])
-			local balance = ply:GetNWInt("Money")
-
-			if (ammount > 0 and ammount <= balance) then
-				ply:SetNWInt("Money", balance - ammount)
-
-				scripted_ents.Get("money"):SpawnFunction(ply, ply:GetEyeTrace(), "money"):SetValue(ammount)
-			end
-
-			return ""
-
-		end
-	end
-end
+print("------------Подсчёт Модулей------------")
+print("Клиентский(CL): " .. cl_count)
+print("Общих(SH): " .. sh_count)
+print("Серверных(SV): " .. sv_count)
+print("Всего загружено: " .. sv_count + sh_count + cl_count )
+print("-----------Загрузка Завершена----------")
