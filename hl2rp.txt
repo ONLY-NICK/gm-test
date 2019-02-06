@@ -1,0 +1,7 @@
+"hl2rp"
+{
+	"base" 			"base"
+	"title" 		"hl2rp"
+	"maps" 			""
+	"menusystem"	"1"
+}
