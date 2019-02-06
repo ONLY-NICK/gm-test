@@ -5,6 +5,7 @@ function GM:PlayerSpawn(ply)
 	ply:SetWalkSpeed(200)
 	ply:Give("weapon_physcannon")
 	ply:Give("weapon_physgun")
+	ply:Give("gmod_tool")
 	ply:SetupHands()
 end
 
