@@ -2,7 +2,7 @@
 {
 	"base" 			"sandbox"
 	"title" 		"HL2RP"
-	"version"   "2.7.0"
+	"version"   	"1.0.0"
 	"maps" 			"^rp"
 	"menusystem"	"1"
 }
